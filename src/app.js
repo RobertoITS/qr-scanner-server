@@ -3,7 +3,7 @@ import morgan from 'morgan'
 var cors = require('cors')
 
 //* Routes
-
+import userRoutes from './routes/users.routes'
 
 //* Express
 const app = express()
@@ -12,7 +12,7 @@ const app = express()
 app.use(cors())
 
 //* Settings
-app.use('port', 3000) //! Port
+app.set('port', 3000) //! Port
 app.use(express.urlencoded( { extended: false } ))
 app.use(express.json())
 
@@ -20,6 +20,6 @@ app.use(express.json())
 app.use(morgan('dev'))
 
 //* Routes direction
-app.use( /* Routes */ )
+app.use( /* Routes */ userRoutes)
 
 export default app

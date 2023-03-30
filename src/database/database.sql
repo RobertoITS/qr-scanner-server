@@ -1,0 +1,1 @@
+CREATE TABLE `itsdatabase`.`users` (`id` INT NOT NULL , `name` VARCHAR NULL , `last_name` VARCHAR NULL , `rol` VARCHAR NOT NULL , `user` VARCHAR NOT NULL , `password` VARCHAR NOT NULL ) ENGINE = InnoDB;
