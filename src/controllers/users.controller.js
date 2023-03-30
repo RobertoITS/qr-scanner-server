@@ -9,13 +9,14 @@ import bcryptjs from 'bcryptjs'
  * D = Delete
  */
 
+//! PARA TENER EN CUENTA! LOS USUARIOS VAN A SER EL MISMO CUIL DE LA PERSONA!
 const register = async (req = request, res = response) => {
 
-    const { user, name, last_name, rol, password } = req.body
+    const { name, last_name, cuil, dir, email, phone, username, pass, role } = req.body
     
-    let passwordHash = await bcryptjs.hash(password, 8)
+    let passwordHash = await bcryptjs.hash(pass, 8)
 
-    const object = { user: user, name: name, last_name: last_name, rol: rol, password: passwordHash }
+    const object = { name: name, last_name: last_name, cuil: cuil, dir: dir, email: email, phone: phone, username: username, pass: passwordHash, role: role }
 
     try {
 
@@ -39,6 +40,5 @@ const register = async (req = request, res = response) => {
         })
     }
 }
-
 
 export const methods = { register }
