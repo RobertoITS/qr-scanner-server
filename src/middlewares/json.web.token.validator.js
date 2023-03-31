@@ -5,7 +5,8 @@ const jwt = require('jsonwebtoken')
 //! This middleware function is used before the endpoints to validate that the token exists.
 //* post("/", validateJWT) => validate the token before enters to the page
 const validateJwt = (req = request, res = response, next) => {
-    const token = req.headers('x-token') //! Token from header
+    const token = req.headers.authorization //! Token from header
+    console.log(token);
     if(!token) {
         return res.status(401).json({
             ok: false,

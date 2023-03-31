@@ -41,4 +41,25 @@ const register = async (req = request, res = response) => {
     }
 }
 
-export const methods = { register }
+
+
+//! TESTING!!
+const get = async (req = request, res = response) => {
+    try {
+        const connection = await connect
+        const result = await connection.query('SELECT * FROM users')
+        res.status(200).json({
+            ok: true,
+            result,
+            msg: 'Approved'
+        })
+    }
+    catch (e) {
+        res.status(400).json({
+            ok: false,
+            e,
+            msg: 'Rejected'
+        })
+    }
+}
+export const methods = { register, get }
