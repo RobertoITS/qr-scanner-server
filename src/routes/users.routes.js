@@ -20,27 +20,33 @@ const router = Router()
  *    type: object
  *    properties:
  *     id:
- *      type: int
+ *      type: number
  *      example: 12
- *     name:
- *      type: string
- *      example: Mathias
  *     last_name:
  *      type: string
  *      example: O'Connor
+ *     name:
+ *      type: string
+ *      example: Mathias
  *     cuil:
- *      type: int
+ *      type: string
  *      example: 23000000007
  *     dir:
  *      type: string
  *      example: St. Anger 204
+ *     phone_number:
+ *      type: string
+ *      example: +54 299 154054054
+ *     birthdate:
+ *      type: string
+ *      example: 01/01/1990
+ *     age:
+ *      type: number
+ *      example: 32
  *     email:
  *      type: string
  *      example: mail@mail.com
- *     phone:
- *      type: string
- *      example: +54 299 404 2303
- *     username:
+ *     user_name:
  *      type: string
  *      example: username_example
  *     pass:
@@ -48,7 +54,10 @@ const router = Router()
  *      example: 123456
  *     role:
  *      type: string
- *      example: TEACHER
+ *      example: PROFESOR
+ *     file_number:
+ *      type: string
+ *      example: 123
  */
 
 //! Register user Documentation:
@@ -109,16 +118,228 @@ const router = Router()
  *          msg:
  *           type: string
  *           example: Error
+ *    302:
+ *     description: User name already exist
+ *     content:
+ *      application/json:
+ *       schema:
+ *        type: object
+ *        properties:
+ *         ok:
+ *          type: boolean
+ *          example: false
+ *         msg:
+ *          type: string
+ *          example: Already exist
  */
 
+//! Get user Documentation:
+/**
+ * @openapi
+ * /api/users/{username}:
+ *  get:
+ *   summary:
+ *    Returns user's information
+ *   tags:
+ *    - Users
+ *   parameters:
+ *    - in: path
+ *      name: username
+ *      schema:
+ *       type: string
+ *      description: Username
+ *      required: true
+ *   responses:
+ *    200:
+ *     description: User found
+ *     content:
+ *      application/json:
+ *       schema:
+ *        type: object
+ *        properties:
+ *         ok:
+ *          type: boolean
+ *          example: true
+ *         result:
+ *          type: array
+ *          items:
+ *           $ref: "#/components/schemas/users"
+ *         msg:
+ *          type: string
+ *          example: Found
+ *    404:
+ *     description: No content
+ *     content:
+ *      application/json:
+ *       schema:
+ *        type: object
+ *        properties:
+ *         ok:
+ *          type: boolean
+ *          example: true
+ *         result:
+ *          type: string
+ *          properties:
+ *           error: 
+ *            type: string
+ *            example: "SQL message"
+ *         msg:
+ *          type: string
+ *          example: Not found
+ *    400:
+ *     description: ERROR
+ *     content:
+ *      application/json:
+ *       schema:
+ *        type: object
+ *        properties:
+ *         ok:
+ *          type: boolean
+ *          example: false
+ *         e:
+ *          type: object
+ *          properties:
+ *           error: 
+ *            type: string
+ *            example: "Some error message"
+ *         msg:
+ *          type: string
+ *          example: Error
+ */
+
+//! Get all users:
+/**
+ * @openapi
+ * /api/users/:
+ *  get:
+ *   summary:
+ *    Get all users
+ *   tags:
+ *    - Users
+ *   responses:
+ *    200:
+ *     description: Information of all users
+ *     content:
+ *      application/json:
+ *       schema:
+ *        type: object
+ *        properties:
+ *         ok:
+ *          type: boolean
+ *          example: true
+ *         result:
+ *          type: array
+ *          items:
+ *           $ref: "#/components/schemas/users"
+ *         msg:
+ *          type: string
+ *          example: Approved
+ *    400:
+ *     description: ERROR
+ *     content:
+ *      application/json:
+ *       schema:
+ *        type: object
+ *        properties:
+ *         ok:
+ *          type: boolean
+ *          example: false
+ *         e:
+ *          type: object
+ *          properties:
+ *           error:
+ *            type: string
+ *            example: "Some error message"
+ *           msg:
+ *            type: string
+ *            example: Rejected
+ */
+
+//! Delete one user
+/**
+ * @openapi
+ * /api/users/{id}:
+ *  delete:
+ *   summary:
+ *    Delete one record from the database
+ *   tags:
+ *    - Users
+ *   parameters:
+ *    - in: path
+ *      name: id
+ *      schema:
+ *       type: number
+ *      description: The id of a user
+ *   responses:
+ *    200:
+ *     description: Information of one user
+ *     content:
+ *      application/json:
+ *       schema:
+ *        type: object
+ *        properties:
+ *         ok:
+ *          type: boolean
+ *          example: true
+ *         result:
+ *          type: object
+ *          properties:
+ *           message:
+ *            type: string
+ *            example: "Some row count message"
+ *         msg:
+ *          type: string
+ *          example: Approved
+ *    400:
+ *     description: ERROR
+ *     content:
+ *      application/json:
+ *       schema:
+ *        type: object
+ *        properties:
+ *         ok:
+ *          type: boolean
+ *          example: false
+ *         e:
+ *          type: object
+ *          properties:
+ *           error:
+ *            type: string
+ *            example: "Some error message"
+ *         msg:
+ *          type: string
+ *          example: Rejected
+ *    404:
+ *     description: Not found
+ *     content:
+ *      application/json:
+ *       schema:
+ *        type: object
+ *        properties:
+ *         ok:
+ *          type: boolean
+ *          example: true
+ *         msg:
+ *          type: string
+ *          example: Not found
+ */
 
 router.post('/api/users', [
     //! Check the fields
-    check('cuil', 'Cuil is required!').not().isEmpty(), check('username', 'User name is required').not().isEmpty(),
+    check('cuil', 'Cuil is required!').not().isEmpty(), check('user_name', 'User name is required').not().isEmpty(),
     check('pass', 'Password required!').not().isEmpty(), check('role', 'Role not defined'),
     validator.fieldValidator /** Validate the fields */ ] ,usersCtr.register) //! Register a new user
 
-//! Testing!!
-router.get('/api/users', jwtValidator.validateJwt, usersCtr.get)
+//! Get One record from the database
+/** Route protected, needs authentication to proceed
+ * View Json Web Token documentation for more
+ */
+router.get('/api/users/:username', /*jwtValidator.validateJwt,*/ usersCtr.getOne)
+
+//! Get all records from the database
+router.get('/api/users/', usersCtr.getAll)
+
+//! Delete one record from the database
+router.delete('/api/users/:id', usersCtr.deleteOne)
 
 export default router
