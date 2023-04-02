@@ -20,3 +20,5 @@ router.get('/api/career/:id', careerCtrl.getOne)
 router.put('/api/career/:id', careerCtrl.putOne)
 
 router.delete('/api/career/:id', careerCtrl.deleteOne)
+
+export default router

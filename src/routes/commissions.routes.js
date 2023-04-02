@@ -21,3 +21,5 @@ router.get('/api/commissions/:id', commissionsCtrl.getOne)
 router.put('/api/commissions/:id', commissionsCtrl.putOne)
 
 router.delete('/api/commissions/:id', commissionsCtrl.deleteOne)
+
+export default router
