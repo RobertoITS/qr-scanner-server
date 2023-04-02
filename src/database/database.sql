@@ -24,7 +24,9 @@ CREATE TABLE users (
 /* CAREER'S TABLE */
 CREATE TABLE career (
 	id int(10) PRIMARY KEY NOT null AUTO_INCREMENT,
-    name varchar(200)
+    name varchar(200),
+    description varchar(500),
+    duration varchar(200)
 )
 
 /* MATERIA'S TABLE 

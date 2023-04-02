@@ -65,7 +65,7 @@ const getOne = async (req = request, res = response) => {
     const username = req.params.username //* Require username from body as "username"
     try {
         const connection = await connect
-        const result = await connection.query('SELECT * FROM users WHERE username = ?', [username]) //! SQL query
+        const result = await connection.query('SELECT * FROM users WHERE user_name = ?', [username]) //! SQL query
         if(result.length != 0) {
             res.status(200).json({
                 ok: true,
@@ -163,7 +163,6 @@ const deleteOne = async (req = request, res = response) => {
     try {
         const connection = await connect
         const result = await connection.query('DELETE FROM users WHERE id = ?', id)
-        console.log(result.affectedRows);
         if(result.affectedRows != 0) {
             res.status(200).json({
                 ok: true,
