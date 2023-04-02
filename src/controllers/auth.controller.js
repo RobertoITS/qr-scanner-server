@@ -3,14 +3,16 @@ import { request, response } from 'express'
 import generateJWT from './../helpers/jwt'
 import bcryptjs from 'bcryptjs'
 
-const login = async (req = request, res = response) => {
+const login = async(req = request, res = response) => {
     const { username, pass } = req.body //! Obtains the data from the body
-    
+
+    console.log(`username: ${username} pass: ${pass}`);
+
     try {
         const connection = await connect
-        const result = await connection.query('SELECT * FROM users WHERE username = ?', username)
+        const result = await connection.query('SELECT * FROM users WHERE user_name = ?', username)
         console.log(result);
-        if(result.length != 0) { //! If the user exist:
+        if (result.length != 0) { //! If the user exist:
             const validPass = bcryptjs.compareSync(pass, result[0].pass) //! Compare the encrypted password
 
             if (!validPass) {
@@ -18,8 +20,7 @@ const login = async (req = request, res = response) => {
                     ok: false,
                     msg: 'Invalid password'
                 })
-            }
-            else {
+            } else {
                 const token = await generateJWT(result[0].id) //! Generate the token for the session
                 return res.status(200).json({
                     ok: true,
@@ -27,15 +28,13 @@ const login = async (req = request, res = response) => {
                     result
                 })
             }
-        }
-        else {
+        } else {
             return res.status(400).json({
                 ok: false,
                 msg: 'Non-existent user'
             })
         }
-    }
-    catch (e) {
+    } catch (e) {
         return res.status(400).json({
             ok: false,
             msg: 'Something goes wrong'
