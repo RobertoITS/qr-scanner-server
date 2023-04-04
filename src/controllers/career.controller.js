@@ -46,6 +46,30 @@ const getOne = async (req = request, res = response) => {
     }
 }
 
+const getOneByParameters = async (req = request, res = response) => {
+    //! Esta consulta busca un parametro en todas las columnas
+    //* Los signos % son comodines para las busquedas avanzadas
+    const parameter = `%${req.params.parameter}%`
+    try {
+        const connection = await connect
+        const result = await connection.query(
+            `SELECT * FROM career WHERE name LIKE '${parameter}' OR description LIKE '${parameter}' OR duration LIKE '${parameter}'`
+        )
+        res.status(200).json({
+            ok: true,
+            result,
+            msg: 'Approved'
+        })
+    }
+    catch (e) {
+        res.status(400).json({
+            ok: false,
+            e,
+            msg: 'Rejected'
+        })
+    }
+}
+
 const getAll = async (req = request, res = response) => {
     try {
         const connection = await connect
@@ -118,4 +142,4 @@ const deleteOne = async (req = request, res = response) => {
     }
 }
 
-export const methods = { postOne, getAll, getOne,putOne, deleteOne }
+export const methods = { postOne, getAll, getOne,putOne, deleteOne, getOneByParameters }

@@ -15,6 +15,8 @@ router.post('/api/career', [
 
 router.get('/api/career', careerCtrl.getAll)
 
+router.get('/api/careers/:parameter', careerCtrl.getOneByParameters)
+
 router.get('/api/career/:id', careerCtrl.getOne)
 
 router.put('/api/career/:id', careerCtrl.putOne)

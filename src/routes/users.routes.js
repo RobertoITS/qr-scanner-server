@@ -334,10 +334,13 @@ router.post('/api/users', [
 /** Route protected, needs authentication to proceed
  * View Json Web Token documentation for more
  */
-router.get('/api/users/:username', /*jwtValidator.validateJwt,*/ usersCtr.getOne)
+router.get('/api/users/:username', jwtValidator.validateJwt, usersCtr.getOne)
 
 //! Get all records from the database
 router.get('/api/users/', usersCtr.getAll)
+
+//! Get only teachers
+router.get('/api/teachers', usersCtr.getTeachers)
 
 //! Delete one record from the database
 router.delete('/api/users/:id', usersCtr.deleteOne)

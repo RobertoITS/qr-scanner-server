@@ -186,4 +186,22 @@ const deleteOne = async (req = request, res = response) => {
     }
 }
 
-export const methods = { register, getOne, getAll, putOne, deleteOne }
+const getTeachers = async (req = request, res = response) => {
+    try {
+        const connection = await connect
+        const result = await connection.query('SELECT * FROM user WHERE role = TEACHER')
+        res.status(200).json({
+            ok: true,
+            result,
+            msg: 'Approved'
+        })
+    }
+    catch(e) {
+        res.status(400).json({
+            ok: false,
+            msg: 'Rejected'
+        })
+    }
+}
+
+export const methods = { register, getOne, getAll, putOne, deleteOne, getTeachers }
