@@ -18,6 +18,7 @@ const validateJwt = (req = request, res = response, next) => {
         //* We verify the token obtained with the secret key:
         const { id } = jwt.verify(token, process.env.JWT_SECRET)
         req.id = id
+        console.log('Access granted');
         next() //* Continue
     }
     catch (e) {

@@ -336,8 +336,11 @@ router.post('/api/users', [
  */
 router.get('/api/users/:username', jwtValidator.validateJwt, usersCtr.getOne)
 
+//! Check if user name is available
+router.get('/api/users/available/:username', jwtValidator.validateJwt, usersCtr.available)
+
 //! Get all records from the database
-router.get('/api/users/', usersCtr.getAll)
+router.get('/api/users/', jwtValidator.validateJwt,usersCtr.getAll)
 
 //! Get only teachers
 router.get('/api/teachers', usersCtr.getTeachers)

@@ -9,6 +9,37 @@ import bcryptjs from 'bcryptjs'
  * D = Delete
  */
 
+const available = async (req = request, res = response) => { //! Check if user already exist
+    const cuil = req.params.username
+    console.log(cuil);
+    try {
+        const connection = await connect
+        const result = await connection.query('SELECT * FROM users WHERE user_name = ?', cuil)
+        console.log(result);
+        if (result.length != 0){
+            res.status(200).json({
+                ok: true,
+                result,
+                msg: 'User already exist'
+            })
+        }
+        else {
+            res.status(404).json({
+                ok: true,
+                result,
+                msg: 'Available'
+            })
+        }
+    }
+    catch (e) {
+        res.status(400).json({
+            ok: false,
+            e,
+            msg: 'Rejected'
+        })
+    }
+}
+
 //! Post request => Creates a new user
 /**
  * 
@@ -23,27 +54,17 @@ const register = async (req = request, res = response) => {
     let passwordHash = await bcryptjs.hash(pass, 8)
     //* Create the object
     const object = { last_name: last_name, name: name, cuil: cuil, dir: dir, phone_number: phone_number, birthdate: birthdate, age: age, email: email, user_name: user_name, pass: passwordHash, role: role, file_number: file_number }
-    const i = object.user_name
     try {
+        
         const connection = await connect
-        const result = await connection.query('SELECT * FROM users WHERE user_name = ?', i)
-        console.log(result);
-        if (result.length != 0){ //! IF THE USERNAME ALREADY EXIST
-            res.status(302).json({
-                ok: false,
-                msg: 'Already exist'
-            })
-        }
-        else {
-            const connection = await connect
-            const result = await connection.query('INSERT INTO users SET ?', object) //! SQL query
-            res.status(201).json({
-                ok: true,
-                object, //* Returns the object (user info)
-                result, //* Result of the query
-                msg: 'Created'
-            })
-        }
+        const result = await connection.query('INSERT INTO users SET ?', object) //! SQL query
+        res.status(201).json({
+            ok: true,
+            object, //* Returns the object (user info)
+            result, //* Result of the query
+            msg: 'Created'
+        })
+    
     }
     catch(e) { //! ERROR
         res.status(400).json({
@@ -204,4 +225,4 @@ const getTeachers = async (req = request, res = response) => {
     }
 }
 
-export const methods = { register, getOne, getAll, putOne, deleteOne, getTeachers }
+export const methods = { register, getOne, getAll, putOne, deleteOne, getTeachers, available }
