@@ -21,6 +21,7 @@ const login = async(req = request, res = response) => {
                     msg: 'Invalid password'
                 })
             } else {
+                //! For token generation, uses role, to compare later
                 const token = await generateJWT(result[0].id) //! Generate the token for the session
                 return res.status(200).json({
                     ok: true,

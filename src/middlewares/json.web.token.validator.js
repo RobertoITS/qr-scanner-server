@@ -8,6 +8,7 @@ const validateJwt = (req = request, res = response, next) => {
     const token = req.headers.authorization //! Token from header
     console.log(token);
     if(!token) {
+        console.log('Access denied');
         return res.status(401).json({
             ok: false,
             msg: 'Missing token'

@@ -9,12 +9,11 @@ import bcryptjs from 'bcryptjs'
  * D = Delete
  */
 
-const available = async (req = request, res = response) => { //! Check if user already exist
-    const cuil = req.params.username
-    console.log(cuil);
+const availableUser = async (req = request, res = response) => { //! Check if user already exist
+    const username = req.params.username
     try {
         const connection = await connect
-        const result = await connection.query('SELECT * FROM users WHERE user_name = ?', cuil)
+        const result = await connection.query('SELECT * FROM users WHERE user_name = ?', username)
         console.log(result);
         if (result.length != 0){
             res.status(200).json({
@@ -28,6 +27,37 @@ const available = async (req = request, res = response) => { //! Check if user a
                 ok: true,
                 result,
                 msg: 'Available'
+            })
+        }
+    }
+    catch (e) {
+        res.status(400).json({
+            ok: false,
+            e,
+            msg: 'Rejected'
+        })
+    }
+}
+
+const availableCuil = async (req = request, res = response) => { //! Check if user already exist
+    const cuil = req.params.cuil
+    console.log(cuil);
+    try {
+        const connection = await connect
+        const result = await connection.query('SELECT * FROM users WHERE cuil = ?', cuil)
+        console.log(result);
+        if (result.length != 0){
+            res.status(200).json({
+                ok: true,
+                result,
+                msg: 'Cuil already registered'
+            })
+        }
+        else {
+            res.status(404).json({
+                ok: true,
+                result,
+                msg: 'Not registered'
             })
         }
     }
@@ -225,4 +255,4 @@ const getTeachers = async (req = request, res = response) => {
     }
 }
 
-export const methods = { register, getOne, getAll, putOne, deleteOne, getTeachers, available }
+export const methods = { register, getOne, getAll, putOne, deleteOne, getTeachers, availableUser, availableCuil }

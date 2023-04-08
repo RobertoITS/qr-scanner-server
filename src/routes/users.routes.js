@@ -337,7 +337,8 @@ router.post('/api/users', [
 router.get('/api/users/:username', jwtValidator.validateJwt, usersCtr.getOne)
 
 //! Check if user name is available
-router.get('/api/users/available/:username', jwtValidator.validateJwt, usersCtr.available)
+router.get('/api/users/available-user-name/:username', jwtValidator.validateJwt, usersCtr.availableUser)
+router.get('/api/users/available-cuil/:cuil', jwtValidator.validateJwt, usersCtr.availableCuil)
 
 //! Get all records from the database
 router.get('/api/users/', jwtValidator.validateJwt,usersCtr.getAll)
@@ -347,5 +348,8 @@ router.get('/api/teachers', usersCtr.getTeachers)
 
 //! Delete one record from the database
 router.delete('/api/users/:id', usersCtr.deleteOne)
+
+//! Post one
+router.put('/api/users/:id', jwtValidator.validateJwt, usersCtr.putOne)
 
 export default router
