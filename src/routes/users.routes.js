@@ -328,13 +328,16 @@ router.post('/api/users', [
     //! Check the fields
     check('cuil', 'Cuil is required!').not().isEmpty(), check('user_name', 'User name is required').not().isEmpty(),
     check('pass', 'Password required!').not().isEmpty(), check('role', 'Role not defined'),
-    validator.fieldValidator /** Validate the fields */ ] ,usersCtr.register) //! Register a new user
+    validator.fieldValidator /** Validate the fields */ ], jwtValidator.validateJwt ,usersCtr.register) //! Register a new user
 
 //! Get One record from the database
 /** Route protected, needs authentication to proceed
  * View Json Web Token documentation for more
  */
-router.get('/api/users/:username', jwtValidator.validateJwt, usersCtr.getOne)
+router.get('/api/users/:id', jwtValidator.validateJwt, usersCtr.getOne)
+
+//! Get various records from database
+router.get('/api/users/parameters/:parameter', jwtValidator.validateJwt ,usersCtr.getByParameters)
 
 //! Check if user name is available
 router.get('/api/users/available-user-name/:username', jwtValidator.validateJwt, usersCtr.availableUser)
@@ -344,12 +347,12 @@ router.get('/api/users/available-cuil/:cuil', jwtValidator.validateJwt, usersCtr
 router.get('/api/users/', jwtValidator.validateJwt,usersCtr.getAll)
 
 //! Get only teachers
-router.get('/api/teachers', usersCtr.getTeachers)
+router.get('/api/teachers/', jwtValidator.validateJwt, usersCtr.getTeachers)
 
 //! Delete one record from the database
-router.delete('/api/users/:id', usersCtr.deleteOne)
+router.delete('/api/users/:id', jwtValidator.validateJwt, usersCtr.deleteOne)
 
-//! Post one
+//! Put one
 router.put('/api/users/:id', jwtValidator.validateJwt, usersCtr.putOne)
 
 export default router

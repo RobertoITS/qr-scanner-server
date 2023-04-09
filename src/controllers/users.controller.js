@@ -113,10 +113,10 @@ const register = async (req = request, res = response) => {
  * 
  */
 const getOne = async (req = request, res = response) => {
-    const username = req.params.username //* Require username from body as "username"
+    const id = req.params.id //* Require username from body as "username"
     try {
         const connection = await connect
-        const result = await connection.query('SELECT * FROM users WHERE user_name = ?', [username]) //! SQL query
+        const result = await connection.query('SELECT * FROM users WHERE id = ?', [id]) //! SQL query
         if(result.length != 0) {
             res.status(200).json({
                 ok: true,
@@ -155,6 +155,28 @@ const getAll = async (req = request, res = response) => {
     catch (e) {
         res.status(400).json({
             ok: false,
+            e,
+            msg: 'Rejected'
+        })
+    }
+}
+
+const getByParameters = async (req = request, res = response) => {
+    const parameter = `%${req.params.parameter}%`
+    try {
+        const connection = await connect
+        const result = await connection.query(
+            `SELECT * FROM users WHERE last_name LIKE '${parameter}' OR name LIKE '${parameter}' OR cuil LIKE '${parameter}' OR dir LIKE '${parameter}' OR phone_number LIKE '${parameter}' OR birthdate LIKE '${parameter}' OR age LIKE '${parameter}' OR email LIKE '${parameter}' OR user_name LIKE '${parameter}' OR file_number LIKE '${parameter}'`
+        )
+        res.status(200).json({
+            ok: true,
+            result,
+            msg: 'Approved'
+        })
+    }
+    catch (e) {
+        res.status(400).json({
+            ok:false,
             e,
             msg: 'Rejected'
         })
@@ -240,7 +262,7 @@ const deleteOne = async (req = request, res = response) => {
 const getTeachers = async (req = request, res = response) => {
     try {
         const connection = await connect
-        const result = await connection.query('SELECT * FROM user WHERE role = TEACHER')
+        const result = await connection.query(`SELECT * FROM users WHERE role = 'TEACHER'`)
         res.status(200).json({
             ok: true,
             result,
@@ -250,9 +272,10 @@ const getTeachers = async (req = request, res = response) => {
     catch(e) {
         res.status(400).json({
             ok: false,
+            e,
             msg: 'Rejected'
         })
     }
 }
 
-export const methods = { register, getOne, getAll, putOne, deleteOne, getTeachers, availableUser, availableCuil }
+export const methods = { register, getOne, getAll, putOne, deleteOne, getTeachers, availableUser, availableCuil, getByParameters }

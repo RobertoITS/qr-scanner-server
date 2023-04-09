@@ -39,6 +39,8 @@ CREATE TABLE materia(
     professor_id int(10),
     actual_year varchar(50),
     classes_quantity int(50),
+    career_id int(10),
+    FOREIGN KEY (career_id) REFERENCES career(id),
     FOREIGN KEY (professor_id) REFERENCES users(id)
 )
 

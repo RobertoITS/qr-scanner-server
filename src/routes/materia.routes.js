@@ -13,7 +13,7 @@ router.post(
     materiaCtrl.postOne
     )
 
-router.get('/api/materia', materiaCtrl.getAll)
+router.get('/api/materia/', materiaCtrl.getAll)
 
 router.get('/api/materia/:id', materiaCtrl.deleteOne)
 
