@@ -2,10 +2,11 @@ import { request, response } from 'express'
 import { connect } from '../database/database'
 
 const postOne = async (req = request, res = response) => {
-    const { class_day, class_schedules } = req.body
+    const { id, class_day, class_schedule } = req.body
     const schedule = {
+        id: id,
         class_day: class_day,
-        class_schedules: class_schedules
+        class_schedule: class_schedule
     }
     try {
         const connection = await connect
@@ -68,7 +69,7 @@ const putOne = async (req = request, res = response) => {
     const id = req.params.id
     const schedule = {
         class_day: req.body.class_day,
-        class_schedules: req.body.class_schedules
+        class_schedule: req.body.class_schedule
     }
     try {
         const connection = await connect

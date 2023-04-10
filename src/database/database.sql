@@ -46,7 +46,7 @@ CREATE TABLE materia(
 
 /* SCHEDULES'S TABLE */
 CREATE TABLE schedules (
-	id int(10) PRIMARY key not null AUTO_INCREMENT,
+	id int(10) PRIMARY key not null,
     class_day varchar(20),
     class_schedule varchar(20)
 )

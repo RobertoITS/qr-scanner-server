@@ -5,7 +5,7 @@ import { validator } from '../middlewares/fields.validator'
 
 const router = Router()
 
-router.post('/api/schedules', [
+router.post('/api/schedules/', [
         check('class_day', 'Class day is required').not().isEmpty(),
         check('class_schedule', 'Schedule class is required').not().isEmpty(),
         validator.fieldValidator
@@ -13,7 +13,7 @@ router.post('/api/schedules', [
     schedulesCtrl.postOne
 )
 
-router.get('/api/schedules', schedulesCtrl.getAll)
+router.get('/api/schedules/', schedulesCtrl.getAll)
 
 router.get('/api/schedules/:id', schedulesCtrl.getOne)
 
