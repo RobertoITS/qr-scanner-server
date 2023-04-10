@@ -2,15 +2,14 @@ import { request, response } from 'express'
 import { connect } from '../database/database'
 
 const postOne = async (req = request, res = response) => {
-    const { name, class_day, schedule_class } = req.body
-    const commission = {
-        name: name,
+    const { class_day, class_schedules } = req.body
+    const schedule = {
         class_day: class_day,
-        schedule_class: schedule_class
+        class_schedules: class_schedules
     }
     try {
         const connection = await connect
-        const result = await connection.query('INSERT INTO commission SET ?', commission)
+        const result = await connection.query('INSERT INTO schedules SET ?', schedule)
         res.status(201).json({
             ok:true,
             result,
@@ -30,7 +29,7 @@ const getOne = async (req = request, res = response) => {
     const id = req.params.id
     try {
         const connection = await connect
-        const result = await connection.query('SELECT * FROM commission WHERE id = ?', id)
+        const result = await connection.query('SELECT * FROM schedules WHERE id = ?', id)
         res.status(200).json({
             ok: true,
             result,
@@ -49,7 +48,7 @@ const getOne = async (req = request, res = response) => {
 const getAll = async (req = request, res = response) => {
     try {
         const connection = await connect
-        const result = await connection.query('SELECT * FROM commission')
+        const result = await connection.query('SELECT * FROM schedules')
         res.status(200).json({
             ok: true,
             result,
@@ -67,14 +66,13 @@ const getAll = async (req = request, res = response) => {
 
 const putOne = async (req = request, res = response) => {
     const id = req.params.id
-    const commission = {
-        name: req.body.name,
+    const schedule = {
         class_day: req.body.class_day,
-        schedule_class: req.body.schedule_class
+        class_schedules: req.body.class_schedules
     }
     try {
         const connection = await connect
-        const result = await connection.query('UPDATE commission SET ? WHERE id = ?', [commission, id])
+        const result = await connection.query('UPDATE schedules SET ? WHERE id = ?', [schedule, id])
         res.status(200).json({
             ok: true,
             result,
@@ -94,7 +92,7 @@ const deleteOne = async (req = request, res = response) => {
     const id = req.params.id
     try {
         const connection = await connect
-        const result = await connection.query('DELETE FROM commission WHERE id = ?', id)
+        const result = await connection.query('DELETE FROM schedules WHERE id = ?', id)
         if(result.affectedRows != 0){
             res.status(200).json({
                 ok: true,

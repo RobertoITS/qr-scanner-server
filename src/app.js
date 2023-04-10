@@ -7,7 +7,7 @@ var cors = require('cors')
 import userRoutes from './routes/users.routes'
 import authRoutes from './routes/auth.routes'
 import careerRoutes from './routes/career.routes'
-import commissionsRoutes from './routes/commissions.routes'
+import schedulesRoutes from './routes/schedules.routes'
 import materiaRoutes from './routes/materia.routes'
 
 //* Express
@@ -32,6 +32,6 @@ app.use(session({
 }))
 
 //* Routes direction
-app.use( /* Routes */ userRoutes, authRoutes, careerRoutes, commissionsRoutes, materiaRoutes)
+app.use( /* Routes */ userRoutes, authRoutes, careerRoutes, schedulesRoutes, materiaRoutes)
 
 export default app

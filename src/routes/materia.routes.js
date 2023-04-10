@@ -21,4 +21,6 @@ router.put('/api/materia/:id', materiaCtrl.putOne)
 
 router.delete('/api/materia/:id', materiaCtrl.deleteOne)
 
+router.get('/api/materia/parameter/:parameter', materiaCtrl.getOneByParameter)
+
 export default router

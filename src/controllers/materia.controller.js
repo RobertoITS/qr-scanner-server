@@ -124,4 +124,24 @@ const deleteOne = async (req = request, res = response) => {
     }
 }
 
-export const methods = { postOne, getAll, getOne, putOne, deleteOne }
+const getOneByParameter = async (req = request, res = response) => {
+    const parameter = `%${req.params.parameter}%`
+    try {
+        const connection = await connect
+        const result = await connection.query(`select * from materia where name like '${parameter}'`)
+        res.status(200).json({
+            ok: true,
+            result,
+            msg: 'Approved'
+        })
+    }
+    catch(e) {
+        res.status(400).json({
+            ok: false,
+            e,
+            msg: 'Rejected'
+        })
+    }
+}
+
+export const methods = { postOne, getAll, getOne, putOne, deleteOne, getOneByParameter }
