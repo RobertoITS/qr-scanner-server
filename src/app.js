@@ -9,6 +9,7 @@ import authRoutes from './routes/auth.routes'
 import careerRoutes from './routes/career.routes'
 import schedulesRoutes from './routes/schedules.routes'
 import materiaRoutes from './routes/materia.routes'
+import inscriptionsRoutes from './routes/inscriptions.routes'
 
 //* Express
 const app = express()
@@ -32,6 +33,6 @@ app.use(session({
 }))
 
 //* Routes direction
-app.use( /* Routes */ userRoutes, authRoutes, careerRoutes, schedulesRoutes, materiaRoutes)
+app.use( /* Routes */ userRoutes, authRoutes, careerRoutes, schedulesRoutes, materiaRoutes, inscriptionsRoutes)
 
 export default app

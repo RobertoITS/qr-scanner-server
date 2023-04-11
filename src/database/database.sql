@@ -114,3 +114,13 @@ CREATE TABLE user_register_attendance (
     FOREIGN KEY (student_id) REFERENCES users(id),
     FOREIGN KEY (attendance_id) REFERENCES attendance(id)
 )
+
+
+/*
+! SOME SQL QUERIES
+*/
+
+'select * from career C
+inner join materia M
+on C.id = M.career_id
+order by C.id'
