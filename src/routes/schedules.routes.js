@@ -21,4 +21,6 @@ router.put('/api/schedules/:id', schedulesCtrl.putOne)
 
 router.delete('/api/schedules/:id', schedulesCtrl.deleteOne)
 
+router.get('/api/schedule/:parameter', schedulesCtrl.getOneByParameter)
+
 export default router
