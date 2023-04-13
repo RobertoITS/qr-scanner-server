@@ -9,8 +9,8 @@ import { connect } from '../database/database'
  */
 
 const postOne = async (req = request, res = response) => {
-    const { name, professor_id, actual_year, classes_quantity, career_id } = req.body
-    const materia = { name: name, professor_id: professor_id, actual_year: actual_year, classes_quantity: classes_quantity, career_id: career_id }
+    const { materia_name, professor_id, actual_year, classes_quantity, career_id } = req.body
+    const materia = { materia_name: materia_name, professor_id: professor_id, actual_year: actual_year, classes_quantity: classes_quantity, career_id: career_id }
     try {
         const connection = await connect
         const result = await connection.query('INSERT INTO materia SET ?', materia)
@@ -71,7 +71,7 @@ const getOne = async (req = request, res = response) => {
 const putOne = async (req = request, res = response) => {
     const id = req.params.id
     const materia = {
-        name: req.body.name,
+        materia_name: req.body.materia_name,
         professor_id: req.body.professor_id,
         actual_year: req.body.actual_year,
         classes_quantity: req.body.classes_quantity,
@@ -128,7 +128,7 @@ const getOneByParameter = async (req = request, res = response) => {
     const parameter = `%${req.params.parameter}%`
     try {
         const connection = await connect
-        const result = await connection.query(`select * from materia where name like '${parameter}'`)
+        const result = await connection.query(`select * from materia where materia_name like '${parameter}'`)
         res.status(200).json({
             ok: true,
             result,

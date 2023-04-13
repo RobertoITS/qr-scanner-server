@@ -6,7 +6,7 @@ import { validator } from '../middlewares/fields.validator'
 const router = Router()
 
 router.post('/api/career', [
-        check('name', 'Name is required').not().isEmpty(),
+        check('career_name', 'Name is required').not().isEmpty(),
         check('duration', 'Duration is required').not().isEmpty(),
         validator.fieldValidator
     ],

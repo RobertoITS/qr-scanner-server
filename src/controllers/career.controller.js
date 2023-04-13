@@ -2,9 +2,9 @@ import { request, response } from 'express'
 import { connect } from '../database/database'
 
 const postOne = async (req = request, res = response) => {
-    const { name, description, duration } = req.body
+    const { career_name, description, duration } = req.body
     const career = {
-        name: name,
+        career_name: career_name,
         description: description,
         duration: duration
     }
@@ -53,7 +53,8 @@ const getOneByParameters = async (req = request, res = response) => {
     try {
         const connection = await connect
         const result = await connection.query(
-            `SELECT * FROM career WHERE name LIKE '${parameter}' OR description LIKE '${parameter}' OR duration LIKE '${parameter}'`
+            //`SELECT * FROM career WHERE name LIKE '${parameter}' OR description LIKE '${parameter}' OR duration LIKE '${parameter}'`
+            'select * from career where concat(career_name, description, duration) like ?', parameter
         )
         res.status(200).json({
             ok: true,
@@ -92,7 +93,7 @@ const getAll = async (req = request, res = response) => {
 const putOne = async (req = request, res = response) => {
     const id = req.params.id
     const career = {
-        name: req.body.name,
+        career_name: req.body.career_name,
         description: req.body.description,
         duration: req.body.duration
     }

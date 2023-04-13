@@ -122,7 +122,10 @@ const getOneByParameter = async (req = request, res = response) => {
     console.log(parameter);
     try {
         const connection = await connect
-        const result = await connection.query(`SELECT * FROM schedules WHERE class_day LIKE '${parameter}' OR class_schedule LIKE '${parameter}'`)
+        const result = await connection.query(
+            //`SELECT * FROM schedules WHERE class_day LIKE '${parameter}' OR class_schedule LIKE '${parameter}'`
+            'select * from schedules where concat(class_day, class_schedule) like ?', parameter
+            )
         res.status(200).json({
             ok: true,
             result,

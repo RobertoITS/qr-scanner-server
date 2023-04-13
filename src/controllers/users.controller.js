@@ -166,7 +166,8 @@ const getByParameters = async (req = request, res = response) => {
     try {
         const connection = await connect
         const result = await connection.query(
-            `SELECT * FROM users WHERE last_name LIKE '${parameter}' OR name LIKE '${parameter}' OR cuil LIKE '${parameter}' OR dir LIKE '${parameter}' OR phone_number LIKE '${parameter}' OR birthdate LIKE '${parameter}' OR age LIKE '${parameter}' OR email LIKE '${parameter}' OR user_name LIKE '${parameter}' OR file_number LIKE '${parameter}'`
+            //`SELECT * FROM users WHERE last_name LIKE '${parameter}' OR name LIKE '${parameter}' OR cuil LIKE '${parameter}' OR dir LIKE '${parameter}' OR phone_number LIKE '${parameter}' OR birthdate LIKE '${parameter}' OR age LIKE '${parameter}' OR email LIKE '${parameter}' OR user_name LIKE '${parameter}' OR file_number LIKE '${parameter}'`
+            'select * from users where concat(last_name, name, cuil, id, phone_number, email, age, birthdate, file_number, user_name) like ?', parameter
         )
         res.status(200).json({
             ok: true,

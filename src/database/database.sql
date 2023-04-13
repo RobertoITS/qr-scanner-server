@@ -67,6 +67,11 @@ CREATE TABLE attendance (
 )
 
 /*
+? TENER EN CUENTA QUE LOS PROFESORES SE BUSCAN EN LAS MATERIAS (nombre y apellido),
+? Y LOS ALUMNOS SE BUSCAN EN LAS INSCRIPCIONES (nombre y apellido)
+*/
+
+/*
 ! --------------------------- RELATIONAL TABLES ---------------------------
 */
 
@@ -88,13 +93,13 @@ CREATE TABLE career_contains (
     FOREIGN KEY (career_id) REFERENCES career(id)
 )
 
-/* MATERIA HAS COMMISSIONS */
-CREATE TABLE materia_has_commissions (
+/* MATERIA HAS SCHEDULES */
+CREATE TABLE materia_has_schedules (
 	id int(10) PRIMARY KEY not null AUTO_INCREMENT,
     materia_id int(10),
-    commission_id int(10),
+    schedule_id int(10),
     FOREIGN KEY (materia_id) REFERENCES materia(id),
-    FOREIGN KEY (commission_id) REFERENCES commission(id)
+    FOREIGN KEY (schedule_id) REFERENCES schedules(id)
 )
 
 /* COMMISSIONS REGISTER ATTENDANCES */

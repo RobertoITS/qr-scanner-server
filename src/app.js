@@ -10,6 +10,7 @@ import careerRoutes from './routes/career.routes'
 import schedulesRoutes from './routes/schedules.routes'
 import materiaRoutes from './routes/materia.routes'
 import inscriptionsRoutes from './routes/inscriptions.routes'
+import msRoutes from './routes/materia.has.schedules.routes'
 
 //* Express
 const app = express()
@@ -33,6 +34,6 @@ app.use(session({
 }))
 
 //* Routes direction
-app.use( /* Routes */ userRoutes, authRoutes, careerRoutes, schedulesRoutes, materiaRoutes, inscriptionsRoutes)
+app.use( /* Routes */ userRoutes, authRoutes, careerRoutes, schedulesRoutes, materiaRoutes, inscriptionsRoutes, msRoutes)
 
 export default app
