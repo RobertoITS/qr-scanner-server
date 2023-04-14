@@ -29,15 +29,11 @@ const getOneByParameters = async (req = request, res = response) => {
     console.log(parameter);
     try {
         const connection = await connect
-        const result = await connection.query(
+        const result = await connection.query( //? ------------> Search student name, career
             'SELECT * FROM inscriptions I ' +
-            'INNER JOIN materia M ' +
-            'INNER JOIN users U ' +
+            'INNER JOIN materia M INNER JOIN users U INNER JOIN career C' +
             'ON I.materia_id = M.id AND I.student_id = U.id ' +
-            `WHERE U.name LIKE '${parameter}' OR ` +
-            `U.last_name LIKE '${parameter}' OR ` +
-            `U.cuil LIKE '${parameter}' ` +
-            'ORDER BY I.id'
+            'WHERE CONCAT(U.name, U.last_name, U.cuil, M.materia_name, C.career_name) LIKE ?', parameter
         )
         res.status(200).json({
             ok: true,

@@ -11,6 +11,7 @@ import schedulesRoutes from './routes/schedules.routes'
 import materiaRoutes from './routes/materia.routes'
 import inscriptionsRoutes from './routes/inscriptions.routes'
 import msRoutes from './routes/materia.has.schedules.routes'
+import ccmRoutes from './routes/career.contains.materia.routes'
 
 //* Express
 const app = express()
@@ -34,6 +35,6 @@ app.use(session({
 }))
 
 //* Routes direction
-app.use( /* Routes */ userRoutes, authRoutes, careerRoutes, schedulesRoutes, materiaRoutes, inscriptionsRoutes, msRoutes)
+app.use( /* Routes */ userRoutes, authRoutes, careerRoutes, schedulesRoutes, materiaRoutes, inscriptionsRoutes, msRoutes, ccmRoutes)
 
 export default app

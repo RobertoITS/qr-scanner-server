@@ -85,7 +85,7 @@ CREATE TABLE inscriptions (
 )
 
 /* CAREER CONTAINS MATERIA */
-CREATE TABLE career_contains (
+CREATE TABLE career_contains_materia (
 	id int(10) PRIMARY KEY not null AUTO_INCREMENT,
     materia_id int(10),
     career_id int(10),
@@ -103,11 +103,11 @@ CREATE TABLE materia_has_schedules (
 )
 
 /* COMMISSIONS REGISTER ATTENDANCES */
-CREATE TABLE commission_register_attendance (
+CREATE TABLE schedule_register_attendance (
 	id int(50) PRIMARY KEY not null AUTO_INCREMENT,
-    commission_id int(10),
+    schedule_id int(10),
     attendance_id int(50),
-    FOREIGN KEY (commission_id) REFERENCES commission(id),
+    FOREIGN KEY (schedule_id) REFERENCES schedule(id),
     FOREIGN KEY (attendance_id) REFERENCES attendance(id)
 )
 
