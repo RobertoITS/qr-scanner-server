@@ -1,21 +1,22 @@
-import { connect } from "../database/database";
 import { response, request } from 'express'
+import { connect } from '../database/database'
 
 const getAll = async (req = request, res = response) => {
     try {
         const connection = await connect
         const result = await connection.query(
-            'SELECT MS.id, MS.materia_id, MS.schedule_id, M.materia_name, M.actual_year, M.classes_quantity, M.career_id, S.class_day, S.class_schedule, (U.name) as professor_name, U.last_name, U.cuil FROM materia_has_schedules MS ' + 
-            'inner join materia M inner join schedules S inner join users U ' + 
-            'on MS.materia_id = M.id and MS.schedule_id = S.id and M.professor_id = U.id'
-            )
+            'select A.*, (U.name) as professor_name, U.last_name, U.cuil, U.user_name, M.materia_name, M.actual_year, M.classes_quantity, S.class_day, S.class_schedule from attendance A ' +
+            'inner join users U on A.professor_id = U.id ' +
+            'inner join materia M on A.materia_id = M.id ' +
+            'inner join schedules S on A.schedule_id = S.id'
+        )
         res.status(200).json({
             ok: true,
             result,
             msg: 'Approved'
         })
     }
-    catch(e) {
+    catch (e) {
         res.status(400).json({
             ok: false,
             e,
@@ -25,14 +26,15 @@ const getAll = async (req = request, res = response) => {
 }
 
 const getOneByParameters = async (req = request, res = response) => {
-    const parameter = `%${req.body.parameter}%`
+    const parameter = `%${req.params.parameter}%`
     try {
         const connection = await connect
-        const result = await connection.query( //? --------------> Search professor, career, schedule day
-            'SELECT MS.id, MS.materia_id, MS.schedule_id, M.materia_name, M.actual_year, M.classes_quantity, M.career_id, S.class_day, S.class_schedule, (U.name) as professor_name, U.last_name, U.cuil FROM materia_has_schedules MS ' +
-            'inner join materia M inner join schedules S inner join users U inner join career C ' +
-            'on MS.materia_id = M.id and MS.schedule_id = S.id and U.id = M.professor_id ' +
-            'where concat(M.materia_name, S.class_day, U.name, U.last_name, U.cuil, C.career_name, S.class_day, S.class_schedule) like ?', parameter
+        const result = await connection.query(
+            'select A.*, (U.name) as professor_name, U.last_name, U.cuil, U.user_name, M.materia_name, M.actual_year, M.classes_quantity, S.class_day, S.class_schedule from attendance A ' +
+            'inner join users U on A.professor_id = U.id ' +
+            'inner join materia M on A.materia_id = M.id ' +
+            'inner join schedules S on A.schedule_id = S.id ' +
+            'where concat(A.attendance_date, U.name, U.last_name, U.cuil, U.user_name, M.materia_name, M.actual_year, S.class_day, S.class_schedule) like ?', parameter
         )
         res.status(200).json({
             ok: true,
@@ -40,7 +42,7 @@ const getOneByParameters = async (req = request, res = response) => {
             msg: 'Approved'
         })
     }
-    catch(e){
+    catch(e) {
         res.status(400).json({
             ok: false,
             e,
@@ -50,19 +52,21 @@ const getOneByParameters = async (req = request, res = response) => {
 }
 
 const postOne = async (req = request, res = response) => {
-    const ms = { materia_id: req.body.materia_id, schedule_id: req.body.schedule_id }
+    const attendance = { attendance_date: req.body.attendance_date, professor_id: req.body.professor_id, materia_id: req.body.materia_id, schedule_id: req.body.schedule_id }
     try {
         const connection = await connect
-        const result = await connection.query('insert into materia_has_schedules set ?', ms)
+        const result = await connection.query(
+            'insert into attendance set ?', attendance
+        )
         res.status(201).json({
             ok: true,
             result,
             msg: 'Created'
         })
     }
-    catch(e) {
+    catch (e) {
         res.status(400).json({
-            ok: false, 
+            ok: false,
             e,
             msg: 'Rejected'
         })
@@ -71,17 +75,19 @@ const postOne = async (req = request, res = response) => {
 
 const putOne = async (req = request, res = response) => {
     const id = req.params.id
-    const ms = { materia_id: req.body.materia_id, schedule_id: req.body.schedule_id }
+    const attendance = { attendance_date: req.body.attendance_date, professor_id: req.body.professor_id, materia_id: req.body.materia_id, schedule_id: req.body.schedule_id }
     try {
         const connection = await connect
-        const result = await connection.query('update from materia_has_schedules set ? where id = ?', [ms, id])
+        const result = await connection.query(
+            'update attendance set ? where id = ?', [attendance, id]
+        )
         res.status(200).json({
             ok: true,
             result,
             msg: 'Approved'
         })
     }
-    catch(e){
+    catch(e) {
         res.status(400).json({
             ok: false,
             e,
@@ -95,7 +101,7 @@ const deleteOne = async (req = request, res = response) => {
     try {
         const connection = await connect
         const result = await connection.query(
-            'delete from materia_has_schedules where id = ?', id
+            'delete from attendance where id = ?', id
         )
         res.status(200).json({
             ok: true,
