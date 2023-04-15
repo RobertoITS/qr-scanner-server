@@ -326,9 +326,13 @@ const router = Router()
 
 router.post('/api/users', [
     //! Check the fields
-    check('cuil', 'Cuil is required!').not().isEmpty(), check('user_name', 'User name is required').not().isEmpty(),
-    check('pass', 'Password required!').not().isEmpty(), check('role', 'Role not defined'),
-    validator.fieldValidator /** Validate the fields */ ], jwtValidator.validateJwt ,usersCtr.register) //! Register a new user
+    check('cuil', 'Cuil is required!').not().isEmpty(), 
+    check('user_name', 'User name is required').not().isEmpty(),
+    check('pass', 'Password required!').not().isEmpty(), 
+    check('role', 'Role not defined'),
+    validator.fieldValidator /** Validate the fields */ ], 
+    jwtValidator.validateJwt, 
+    usersCtr.register) //! Register a new user
 
 //! Get One record from the database
 /** Route protected, needs authentication to proceed
@@ -344,7 +348,7 @@ router.get('/api/users/available-user-name/:username', jwtValidator.validateJwt,
 router.get('/api/users/available-cuil/:cuil', jwtValidator.validateJwt, usersCtr.availableCuil)
 
 //! Get all records from the database
-router.get('/api/users/', jwtValidator.validateJwt,usersCtr.getAll)
+router.get('/api/users/', jwtValidator.validateJwt, usersCtr.getAll)
 
 //! Get only teachers
 router.get('/api/teachers/', jwtValidator.validateJwt, usersCtr.getTeachers)
@@ -354,5 +358,11 @@ router.delete('/api/users/:id', jwtValidator.validateJwt, usersCtr.deleteOne)
 
 //! Put one
 router.put('/api/users/:id', jwtValidator.validateJwt, usersCtr.putOne)
+
+//! Get attendance info
+router.get('/api/student/attendance-info/:id', usersCtr.getAttendances)
+
+//! Get materias info
+router.get('/api/student/materias-info/:id', usersCtr.getMaterias)
 
 export default router

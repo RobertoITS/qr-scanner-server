@@ -51,22 +51,46 @@ const getOneByParameters = async (req = request, res = response) => {
     }
 }
 
+//! Al crear una nueva asistencia, primero cuenta la cantidad que ya
+//! estan creadas, y le suma uno mas
+//? En resumen, la materia en si trae la cantidad de clases,
+//? Las asistencias, la cantidad dada a la fecha
+//? El alumno, la cantidad asistida (listaObtenida.length)
 const postOne = async (req = request, res = response) => {
-    const attendance = { attendance_date: req.body.attendance_date, professor_id: req.body.professor_id, materia_id: req.body.materia_id, schedule_id: req.body.schedule_id }
+    const attendance = { 
+        attendance_date: req.body.attendance_date, 
+        professor_id: req.body.professor_id, 
+        materia_id: req.body.materia_id, 
+        schedule_id: req.body.schedule_id,
+        classes_quantity: 0
+    }
     try {
         const connection = await connect
-        const result = await connection.query(
-            'insert into attendance set ?', attendance
-        )
-        res.status(201).json({
-            ok: true,
-            result,
-            msg: 'Created'
-        })
+        const result = await connection.query('select count(id) as classes_quantity from attendance where materia_id = ?', attendance.materia_id)
+        console.log(result[0].classes_quantity);
+        attendance.classes_quantity = result[0].classes_quantity + 1
+        try {
+            const connection = await connect
+            const result = await connection.query(
+                'insert into attendance set ?', attendance
+            )
+            res.status(201).json({
+                ok: true,
+                result,
+                msg: 'Created'
+            })
+        }
+        catch (e) {
+            res.status(400).json({
+                ok: false,
+                e,
+                msg: 'Rejected'
+            })
+        }
     }
-    catch (e) {
+    catch(e){
         res.status(400).json({
-            ok: false,
+            ok:false,
             e,
             msg: 'Rejected'
         })
