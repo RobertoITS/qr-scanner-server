@@ -8,12 +8,27 @@ import { connect } from '../database/database'
  * D = Delete
  */
 
+//! Post Request
+/**
+ * 
+ * @param {Object} req type: Object
+ * @param {Json} res type: Json => Response of the query
+ * 
+ */
 const postOne = async (req = request, res = response) => {
-    const { materia_name, professor_id, actual_year, classes_quantity, career_id } = req.body
-    const materia = { materia_name: materia_name, professor_id: professor_id, actual_year: actual_year, classes_quantity: classes_quantity, career_id: career_id }
+    const materia = { // Get the object
+        materia_name: req.body.materia_name, 
+        professor_id: req.body.professor_id, 
+        actual_year: req.body.actual_year, 
+        classes_quantity: req.body.classes_quantity, 
+        career_id: req.body.career_id 
+    }
     try {
         const connection = await connect
-        const result = await connection.query('INSERT INTO materia SET ?', materia)
+        const result = await connection.query(
+            `INSERT 
+            INTO materia 
+            SET ?`, materia)
         res.status(201).json({
             ok: true,
             result,
@@ -29,10 +44,15 @@ const postOne = async (req = request, res = response) => {
     }
 }
 
+//! Get request
+// Get all the records
 const getAll = async (req = request, res = response) => {
     try {
         const connection = await connect
-        const result = await connection.query('SELECT * FROM materia')
+        const result = await connection.query(
+            `SELECT * 
+            FROM materia`
+        )
         res.status(200).json({
             ok: true,
             result,
@@ -48,11 +68,21 @@ const getAll = async (req = request, res = response) => {
     }
 }
 
+//! Get Request
+/**
+ * 
+ * @param {id} req type: string
+ * @param {Json} res type: Json => Response of the query
+ * 
+ */
 const getOne = async (req = request, res = response) => {
-    const id = req.params.id
+    const id = req.params.id // Get the id
     try {
         const connection = await connect
-        const result = await connection.query('SELECT * FROM materia WHERE id = ?', id)
+        const result = await connection.query(
+            `SELECT * 
+            FROM materia 
+            WHERE id = ?`, id)
         res.status(200).json({
             ok: true,
             result,
@@ -68,19 +98,28 @@ const getOne = async (req = request, res = response) => {
     }
 }
 
+//! Put Request
+/**
+ * 
+ * @param {id.params, Object.body} req type: string
+ * @param {Json} res type: Json => Response of the query
+ * 
+ */
 const putOne = async (req = request, res = response) => {
-    const id = req.params.id
-    const materia = {
+    const id = req.params.id // Get the id
+    const materia = { // Get the object
         materia_name: req.body.materia_name,
         professor_id: req.body.professor_id,
         actual_year: req.body.actual_year,
         classes_quantity: req.body.classes_quantity,
         career_id: req.body.career_id
     }
-
     try {
         const connection = await connect
-        const result = await connection.query('UPDATE materia SET ? WHERE id = ?', [materia, id])
+        const result = await connection.query(
+            `UPDATE materia 
+            SET ? 
+            WHERE id = ?`, [materia, id])
         res.status(200).json({
             ok: true,
             result,
@@ -96,19 +135,29 @@ const putOne = async (req = request, res = response) => {
     }
 }
 
+//! Delete Request
+/**
+ * 
+ * @param {id} req type: string
+ * @param {Json} res type: Json => Response of the query
+ * 
+ */
 const deleteOne = async (req = request, res = response) => {
-    const id = req.params.id
+    const id = req.params.id // Get the id
     try {
         const connection = await connect
-        const result = await connection.query('DELETE FROM materia WHERE id = ?', id)
-        if(result.affectedRows != 0) {
+        const result = await connection.query(
+            `DELETE 
+            FROM materia 
+            WHERE id = ?`, id)
+        if(result.affectedRows != 0) { // If the record exist, it's deleted
             res.status(200).json({
                 ok: true,
                 result,
                 msg: 'Deleted'
             })
         }
-        else {
+        else { // If the record did't exist, 404 not found
             res.status(404).json({
                 ok: true,
                 msg: 'Not found'
@@ -124,11 +173,21 @@ const deleteOne = async (req = request, res = response) => {
     }
 }
 
-const getOneByParameter = async (req = request, res = response) => {
-    const parameter = `%${req.params.parameter}%`
+//! Get Request
+/**
+ * 
+ * @param {parameter} req type: string
+ * @param {Json} res type: Json => Response of the query
+ * 
+ */
+const getByParameter = async (req = request, res = response) => {
+    const parameter = `%${req.params.parameter}%` // Get the parameter
     try {
         const connection = await connect
-        const result = await connection.query(`select * from materia where materia_name like '${parameter}'`)
+        const result = await connection.query(
+            `SELECT * 
+            FROM materia 
+            WHERE materia_name LIKE ?`, parameter)
         res.status(200).json({
             ok: true,
             result,
@@ -144,4 +203,12 @@ const getOneByParameter = async (req = request, res = response) => {
     }
 }
 
-export const methods = { postOne, getAll, getOne, putOne, deleteOne, getOneByParameter }
+//! Export the methods
+export const methods = { 
+    postOne, 
+    getAll, 
+    getOne, 
+    putOne, 
+    deleteOne, 
+    getByParameter 
+}

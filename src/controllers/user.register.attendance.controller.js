@@ -1,20 +1,35 @@
 import { request, response } from 'express'
 import { connect } from '../database/database'
 
+//! Get Request => Get all attendances registration (student)
 const getAll = async (req = request, res = response) => {
     try {
         const connection = await connect
-        const result = await connection.query(
-            'select ura.*, a.professor_id, a.materia_id, a.schedule_id, a.attendance_date,(u.name) as student_name, (u.last_name) as student_last_name, (u.cuil) as student_cuil, ' +
-            '(up.name) as professor_name, (up.last_name) as professor_last_name, (up.cuil) as professor_cuil, m.materia_name, s.class_day, s.class_schedule, ' +
-            'c.career_name from user_register_attendance ura ' +
-            'inner join users u on ura.student_id = u.id ' +
-            'inner join attendance a on ura.attendance_id = a.id ' +
-            'inner join materia m on a.materia_id = m.id ' +
-            'inner join users up on m.professor_id = up.id ' +
-            'inner join schedules s on a.schedule_id = s.id ' +
-            'inner join career_contains_materia ccm on a.materia_id = ccm.materia_id ' +
-            'inner join career c on ccm.career_id = c.id'
+        const result = await connection.query( //? SQL Query, uses inner join for relational tables
+            `SELECT 
+                URA.*, 
+                A.professor_id, 
+                A.materia_id, 
+                A.schedule_id, 
+                A.attendance_date,
+                U.name AS student_name, 
+                U.last_name AS student_last_name, 
+                U.cuil AS student_cuil,
+                UP.name AS professor_name, 
+                UP.last_name AS professor_last_name, 
+                UP.cuil AS professor_cuil, 
+                M.materia_name, 
+                S.class_day, 
+                S.class_schedule,
+                C.career_name 
+            FROM user_register_attendance URA
+            INNER JOIN users U ON URA.student_id = U.id 
+            INNER JOIN attendance A ON URA.attendance_id = A.id 
+            INNER JOIN materia M ON A.materia_id = M.id 
+            INNER JOIN users UP ON M.professor_id = UP.id 
+            INNER JOIN schedules S ON A.schedule_id = S.id 
+            INNER JOIN career_contains_materia CCM ON A.materia_id = CCM.materia_id 
+            INNER JOIN career C ON CCM.career_id = C.id`
         )
         res.status(200).json({
             ok: true,
@@ -31,22 +46,56 @@ const getAll = async (req = request, res = response) => {
     }
 }
 
-const getOneByParameter = async (req = request, res = response) => {
-    const parameter = `%${req.params.parameter}%`
+//! Get Request => Get various records from the database
+/**
+ * 
+ * @param {parameter} req type: string
+ * @param {Json} res type: Json => Attendance info
+ * 
+ */
+const getByParameter = async (req = request, res = response) => {
+    const parameter = `%${req.params.parameter}%` //Get the parameter
     try {
         const connection = await connect
         const result = await connection.query(
-            'select ura.*, a.professor_id, a.materia_id, a.schedule_id, a.attendance_date,(u.name) as student_name, (u.last_name) as student_last_name, (u.cuil) as student_cuil, ' +
-            '(up.name) as professor_name, (up.last_name) as professor_last_name, (up.cuil) as professor_cuil, m.materia_name, s.class_day, s.class_schedule, ' +
-            'c.career_name from user_register_attendance ura ' +
-            'inner join users u on ura.student_id = u.id ' +
-            'inner join attendance a on ura.attendance_id = a.id ' +
-            'inner join materia m on a.materia_id = m.id ' +
-            'inner join users up on m.professor_id = up.id ' +
-            'inner join schedules s on a.schedule_id = s.id ' +
-            'inner join career_contains_materia ccm on a.materia_id = ccm.materia_id ' +
-            'inner join career c on ccm.career_id = c.id ' +
-            'where concat(attendance_date, u.name, u.last_name, u.cuil, up.name, up.last_name, up.cuil,materia_name, class_day, class_schedule, career_name) like ?', parameter
+            `SELECT
+                URA.*, 
+                A.professor_id, 
+                A.materia_id, 
+                A.schedule_id, 
+                A.attendance_date,
+                U.name AS student_name, 
+                U.last_name AS student_last_name, 
+                U.cuil AS student_cuil,
+                UP.name AS professor_name, 
+                UP.last_name AS professor_last_name, 
+                UP.cuil AS professor_cuil, 
+                M.materia_name, 
+                S.class_day, 
+                S.class_schedule, 
+                C.career_name 
+            FROM user_register_attendance URA 
+            INNER JOIN users U ON URA.student_id = U.id 
+            INNER JOIN attendance A ON URA.attendance_id = A.id 
+            INNER JOIN materia M ON A.materia_id = M.id 
+            INNER JOIN users UP ON M.professor_id = UP.id
+            INNER JOIN schedules S ON A.schedule_id = S.id
+            INNER JOIN career_contains_materia CCM ON A.materia_id = CCM.materia_id
+            INNER JOIN career C ON CCM.career_id = C.id
+            WHERE CONCAT(
+                attendance_date, 
+                U.name, 
+                U.last_name, 
+                U.cuil, 
+                UP.name, 
+                UP.last_name, 
+                UP.cuil,
+                materia_name, 
+                class_day, 
+                class_schedule, 
+                career_name
+            ) LIKE ?`, 
+            parameter
         )
         res.status(200).json({
             ok: true,
@@ -63,12 +112,24 @@ const getOneByParameter = async (req = request, res = response) => {
     }
 }
 
+//! Post Request => Post new record
+/**
+ * 
+ * @param {none} req type: none
+ * @param {Json} res type: Json Object => Information of the request
+ * 
+ */
 const postOne = async (req = request, res = response) => {
-    const ura = { student_id: req.body.student_id, attendance_id: req.body.attendance_id }
+    const ura = {  // Get the object
+        student_id: req.body.student_id, 
+        attendance_id: req.body.attendance_id 
+    }
     try {
         const connection = await connect
         const result = await connection.query(
-            'insert into user_register_attendance set ?', ura
+            `INSERT 
+            INTO user_register_attendance 
+            SET ?`, ura
         )
         res.status(201).json({
             ok: true,
@@ -85,13 +146,26 @@ const postOne = async (req = request, res = response) => {
     }
 }
 
+//! Put Request => Edit a record from the database
+/**
+ * 
+ * @param {id} req type: string
+ * @param {Json} res type: Json Object => information of the put request
+ * 
+ */
 const putOne = async (req = request, res = response) => {
-    const id = req.params.id
-    const ura = { student_id: req.body.student_id, attendance_id: req.body.attendance_id }
+    const id = req.params.id // Get the id
+    const ura = { // Get the object
+        student_id: req.body.student_id, 
+        attendance_id: req.body.attendance_id 
+    }
     try {
         const connection = await connect
         const result = await connection.query(
-            'update from user_register_attendance set ? where id = ?', [ura, id]
+            `UPDATE 
+            FROM user_register_attendance 
+            SET ? 
+            WHERE id = ?`, [ura, id]
         )
         res.status(200).json({
             ok: true,
@@ -108,18 +182,35 @@ const putOne = async (req = request, res = response) => {
     }
 }
 
+//! Delete Request => Delete a record from the database
+/**
+ * 
+ * @param {id} req type: string
+ * @param {Json} res type: Json Object => Information of the request
+ * 
+ */
 const deleteOne = async (req = request, res = response) => {
-    const id = req.params.id
+    const id = req.params.id // Get the id
     try {
         const connection = await connect
         const result = await connection.query(
-            'delete from user_register_attendance where id = ?', id
+            `DELETE 
+            FROM user_register_attendance 
+            WHERE id = ?`,id
         )
-        res.status(200).json({
-            ok: true,
-            result,
-            msg: 'Deleted'
-        })
+        if(result.affectedRows != 0) { // If the record exist, it's deleted
+            res.status(200).json({
+                ok: true,
+                result,
+                msg: 'Deleted'
+            })
+        }
+        else { // If the record did't exist, 404 not found
+            res.status(404).json({
+                ok: true,
+                msg: 'Not found'
+            })
+        }
     }
     catch (e) {
         res.status(400).json({
@@ -130,4 +221,10 @@ const deleteOne = async (req = request, res = response) => {
     }
 }
 
-export const methods = { getAll, getOneByParameter, postOne, putOne, deleteOne }
+export const methods = { 
+    getAll, 
+    getByParameter, 
+    postOne, 
+    putOne, 
+    deleteOne 
+}

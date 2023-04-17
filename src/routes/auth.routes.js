@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { methods } from '../controllers/auth.controller'
 
+//! Create the router (CRUD request from express)
 const router = Router()
 
 /**
@@ -11,4 +12,5 @@ const router = Router()
 
 router.post('/api/auth/login', methods.login)
 
+//! Export the router, import in app.js
 export default router

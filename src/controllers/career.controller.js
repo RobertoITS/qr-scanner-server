@@ -1,16 +1,24 @@
 import { request, response } from 'express'
 import { connect } from '../database/database'
 
+//! Post Request
+/**
+ * 
+ * @param {Object} req type: string
+ * @param {Json} res type Json => Response of the query
+ */
 const postOne = async (req = request, res = response) => {
-    const { career_name, description, duration } = req.body
-    const career = {
-        career_name: career_name,
-        description: description,
-        duration: duration
+    const career = { // Get the object
+        career_name: req.body.career_name,
+        description: req.body.description,
+        duration: req.body.duration
     }
     try {
         const connection = await connect
-        const result = await connection.query('INSERT INTO career SET ?', career)
+        const result = await connection.query(
+            `INSERT 
+            INTO career 
+            SET ?`, career)
         res.status(201).json({
             ok:true,
             result,
@@ -26,11 +34,22 @@ const postOne = async (req = request, res = response) => {
     }
 }
 
+
+//! Get Request
+/**
+ * 
+ * @param {id} req type: string
+ * @param {Json} res type: Json => Response of the query
+ * 
+ */
 const getOne = async (req = request, res = response) => {
-    const id = req.params.id
+    const id = req.params.id // Get the id
     try {
         const connection = await connect
-        const result = await connection.query('SELECT * FROM career WHERE id = ?', id)
+        const result = await connection.query(
+            `SELECT * 
+            FROM career 
+            WHERE id = ?`, id)
         res.status(200).json({
             ok: true,
             result,
@@ -46,15 +65,27 @@ const getOne = async (req = request, res = response) => {
     }
 }
 
-const getOneByParameters = async (req = request, res = response) => {
+//! Get Request
+/**
+ * 
+ * @param {parameter} req type: string
+ * @param {Json} res type: Json => Response of the query
+ * 
+ */
+const getByParameters = async (req = request, res = response) => {
     //! Esta consulta busca un parametro en todas las columnas
     //* Los signos % son comodines para las busquedas avanzadas
     const parameter = `%${req.params.parameter}%`
     try {
         const connection = await connect
         const result = await connection.query(
-            //`SELECT * FROM career WHERE name LIKE '${parameter}' OR description LIKE '${parameter}' OR duration LIKE '${parameter}'`
-            'select * from career where concat(career_name, description, duration) like ?', parameter
+            `SELECT * 
+            FROM career 
+            WHERE CONCAT(
+                career_name, 
+                description, 
+                duration
+            ) LIKE ?`, parameter
         )
         res.status(200).json({
             ok: true,
@@ -71,10 +102,14 @@ const getOneByParameters = async (req = request, res = response) => {
     }
 }
 
+//! Get Request
 const getAll = async (req = request, res = response) => {
     try {
         const connection = await connect
-        const result = await connection.query('SELECT * FROM career')
+        const result = await connection.query(
+            `SELECT * 
+            FROM career`
+        )
         res.status(200).json({
             ok: true,
             result,
@@ -90,16 +125,26 @@ const getAll = async (req = request, res = response) => {
     }
 }
 
+//! Put Request
+/**
+ * 
+ * @param {id.params, Object.body} req type: string
+ * @param {Json} res type: Json => Response of the query
+ * 
+ */
 const putOne = async (req = request, res = response) => {
-    const id = req.params.id
-    const career = {
+    const id = req.params.id // Get the id
+    const career = { // Get the object
         career_name: req.body.career_name,
         description: req.body.description,
         duration: req.body.duration
     }
     try {
         const connection = await connect
-        const result = await connection.query('UPDATE career SET ? WHERE id = ?', [career, id])
+        const result = await connection.query(
+            `UPDATE 
+            career SET ? 
+            WHERE id = ?`, [career, id])
         res.status(200).json({
             ok: true,
             result,
@@ -115,19 +160,29 @@ const putOne = async (req = request, res = response) => {
     }
 }
 
+//! Delete Request
+/**
+ * 
+ * @param {id} req type: string
+ * @param {Json} res type: Json => Response of the query
+ * 
+ */
 const deleteOne = async (req = request, res = response) => {
-    const id = req.params.id
+    const id = req.params.id // Get the id
     try {
         const connection = await connect
-        const result = await connection.query('DELETE FROM career WHERE id = ?', id)
-        if(result.affectedRows != 0){
+        const result = await connection.query(
+            `DELETE 
+            FROM career 
+            WHERE id = ?`, id)
+        if(result.affectedRows != 0) { // If the record exist, it's deleted
             res.status(200).json({
                 ok: true,
                 result,
                 msg: 'Deleted'
             })
         }
-        else {
+        else { // If the record did't exist, 404 not found
             res.status(404).json({
                 ok: true,
                 msg: 'Not found'
@@ -143,4 +198,11 @@ const deleteOne = async (req = request, res = response) => {
     }
 }
 
-export const methods = { postOne, getAll, getOne,putOne, deleteOne, getOneByParameters }
+export const methods = { 
+    postOne, 
+    getAll, 
+    getOne,
+    putOne, 
+    deleteOne, 
+    getByParameters 
+}

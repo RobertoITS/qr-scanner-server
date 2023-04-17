@@ -359,6 +359,10 @@ const getTeachers = async (req = request, res = response) => {
  * 
  * @param {user_id, materia_id} req type: string || number
  * @param {Array<string>} res type: Array[0].quantity (classes_quantity), Array[1].quantity (attendance_materia), Array[2].quantity (user_register_attendance)
+ * 
+ * If the student isn't registered in the materia, all the records won't going to appear in
+ * the result of the query
+ * 
  */
 const getAttendances = async (req = request, res = response) => {
     const id = req.params.id

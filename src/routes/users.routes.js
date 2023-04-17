@@ -9,6 +9,7 @@ import { jwtValidator } from '../middlewares/json.web.token.validator'
 //! This routes are for Create, Read, Update and Delete users!!
 //* NOT FOR LOGIN!! (View auth.routes.js)
 
+//! Create the router (CRUD request from express)
 const router = Router()
 
 //! Schema for user:
@@ -365,4 +366,5 @@ router.get('/api/student/attendance-info/:id', usersCtr.getAttendances)
 //! Get materias info
 router.get('/api/student/materias-info/:id', usersCtr.getMaterias)
 
+//! Export the router, import in app.js
 export default router
