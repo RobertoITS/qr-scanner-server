@@ -365,9 +365,12 @@ const getTeachers = async (req = request, res = response) => {
  * 
  */
 const getAttendances = async (req = request, res = response) => {
-    const id = req.params.id
-    const materia_id = req.body.materia_id
-    const actual_year = `%${req.body.actual_year}`
+    const json = JSON.parse(req.params.id)
+    console.log(json)
+    
+    const id = json.id
+    const materia_id = json.materia_id
+    const actual_year = `%${json.actual_year}`
     try {
         const connection = await connect
         const result = await connection.query(

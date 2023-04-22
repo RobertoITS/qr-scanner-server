@@ -332,7 +332,7 @@ router.post('/api/users', [
     check('pass', 'Password required!').not().isEmpty(), 
     check('role', 'Role not defined'),
     validator.fieldValidator /** Validate the fields */ ], 
-    jwtValidator.validateJwt, 
+     
     usersCtr.register) //! Register a new user
 
 //! Get One record from the database
