@@ -14,7 +14,7 @@ const getAll = async (req = request, res = response) => {
                 U.user_name, 
                 M.materia_name, 
                 M.actual_year, 
-                M.classes_quantity, 
+                M.classes_quantity as total_classes, 
                 S.class_day, 
                 S.class_schedule 
             FROM attendance A 
@@ -103,16 +103,32 @@ const getByParameters = async (req = request, res = response) => {
 //? The attendance, the quantity of classes given at the actual date
 //? And the student, the quantity of classes attended (givenList.length)
 const postOne = async (req = request, res = response) => {
-    const split = req.body.attendance_date.split('/')
-    const id = split[0] + split[1] + split[2] + req.body.professor_id + req.body.materia_id + req.body.schedule_id
-    console.log(id);
+    
+    //! GET THE ACTUAL DATE (SERVER LOCAL)
+    //? -------------------------------->
+    const date = new Date()
+    const yyyy = date.getFullYear().toString()
+    let dd = (date.getDate()).toString()
+    if (dd.length < 2) dd = `0${dd}`
+    let mm = (date.getMonth()+1).toString()
+    if (mm.length < 2) mm = `0${mm}`
+    const today = `${dd}/${mm}/${yyyy}`
+    console.log(today);
+    //? -------------------------------->
+
+    //! GENERATE THE ID
+    //? -------------------------------->
+    const id = dd + mm + yyyy + req.body.professor_id + req.body.materia_id + req.body.schedule_id
+    console.log(id)
+    //? -------------------------------->
+
     const attendance = { // Get the object
-        id: id,
-        attendance_date: req.body.attendance_date, 
+        id: id, //? ---------> GENERATED ID
+        attendance_date: today, //? ---------> SERVER DATE
         professor_id: req.body.professor_id, 
         materia_id: req.body.materia_id, 
         schedule_id: req.body.schedule_id,
-        classes_quantity: 0 // Classes quantity, for now, value = 0
+        classes_quantity: 0 //? Classes quantity, for now, value = 0
     }
     try {
         const connection = await connect
@@ -150,6 +166,7 @@ const postOne = async (req = request, res = response) => {
             msg: 'Rejected'
         })
     }
+    
 }
 
 //! Put Request
