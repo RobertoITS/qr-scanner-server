@@ -332,14 +332,13 @@ router.post('/api/users', [
     check('pass', 'Password required!').not().isEmpty(), 
     check('role', 'Role not defined'),
     validator.fieldValidator /** Validate the fields */ ], 
-     
     usersCtr.register) //! Register a new user
 
 //! Get One record from the database
 /** Route protected, needs authentication to proceed
  * View Json Web Token documentation for more
  */
-router.get('/api/users/:id', jwtValidator.validateJwt, usersCtr.getOne)
+router.get('/api/users/:id', usersCtr.getOne)
 
 //! Get various records from database
 router.get('/api/users/parameters/:parameter', jwtValidator.validateJwt ,usersCtr.getByParameters)
@@ -359,12 +358,6 @@ router.delete('/api/users/:id', jwtValidator.validateJwt, usersCtr.deleteOne)
 
 //! Put one
 router.put('/api/users/:id', jwtValidator.validateJwt, usersCtr.putOne)
-
-//! Get attendance info
-router.get('/api/student/attendance-info/:id', usersCtr.getAttendances)
-
-//! Get materias info
-router.get('/api/student/materias-info/:id', usersCtr.getMaterias)
 
 //! Export the router, import in app.js
 export default router

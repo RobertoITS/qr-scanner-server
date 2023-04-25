@@ -354,109 +354,7 @@ const getTeachers = async (req = request, res = response) => {
     }
 }
 
-//! Get Request => Get classes quantity (materia), attendances quantity (attendance of the materia) and attendance registered of the user
-/**
- * 
- * @param {user_id, materia_id} req type: string || number
- * @param {Array<string>} res type: Array[0].quantity (classes_quantity), Array[1].quantity (attendance_materia), Array[2].quantity (user_register_attendance)
- * 
- * If the student isn't registered in the materia, all the records won't going to appear in
- * the result of the query
- * 
- */
-const getAttendances = async (req = request, res = response) => {
-    const json = JSON.parse(req.params.id)
-    console.log(json)
-    
-    const id = json.id
-    const materia_id = json.materia_id
-    const actual_year = `%${json.actual_year}`
-    try {
-        const connection = await connect
-        const result = await connection.query(
-            `SELECT 
-                A.id AS attendance_id, 
-                career_id, 
-                A.professor_id, 
-                URA.student_id, 
-                A.materia_id, 
-                attendance_date, 
-                materia_name, 
-                actual_year, 
-                M.classes_quantity AS total_classes,
-                A.classes_quantity,
-                U.name AS professor,
-                U.last_name AS professor_last_name,
-                C.career_name 
-            FROM attendance A
-            INNER JOIN materia M ON A.materia_id = M.id
-            INNER JOIN career C ON M.career_id = C.id
-            INNER JOIN users U ON M.professor_id = U.id
-            INNER JOIN user_register_attendance URA ON URA.attendance_id = A.id
-            INNER JOIN inscriptions I ON ura.student_id = I.student_id AND M.id = I.materia_id
-            WHERE URA.student_id = ? AND attendance_date LIKE ? AND M.id = ?`,
-            [id, actual_year, materia_id]
-        )
-        res.status(200).json({
-            ok: true,
-            result,
-            msg: 'Approved'
-        })
-    }
-    catch(e) {
-        res.status(400).json({
-            ok: false,
-            e,
-            msg: 'Rejected'
-        })
-    }
-}
 
-//! Get Request => Get student inscription in materias
-/**
- * 
- * @param {student_id} req type: number || string
- * @param {student_materias_info} res type: Json => Materias information
- * 
- */
-const getMaterias = async (req = request, res = response) => {
-    const id = req.params.id
-    try {
-        const connection = await connect
-        const result = await connection.query(
-            `SELECT 
-                I.id AS inscription_id, 
-                I.student_id, 
-                I.materia_id, 
-                M.career_id, 
-                M.professor_id,
-                M.materia_name, 
-                M.actual_year, 
-                C.career_name, 
-                C.duration, 
-                U.name AS professor, 
-                U.last_name AS professor_last_name
-            FROM inscriptions I
-            INNER JOIN materia M ON I.materia_id = M.id
-            INNER JOIN career C ON M.career_id = C.id
-            INNER JOIN users U ON M.professor_id = U.id
-            WHERE I.student_id = ?`,
-            id
-        )
-        res.status(200).json({
-            ok: true,
-            result,
-            msg: 'Approved'
-        })
-    }
-    catch(e) {
-        res.status(400).json({
-            ok: false,
-            e,
-            msg: 'Rejected'
-        })
-    }
-}
 
 export const methods = { 
     register, 
@@ -468,6 +366,4 @@ export const methods = {
     availableUser, 
     availableCuil, 
     getByParameters,
-    getAttendances,
-    getMaterias
 }

@@ -226,6 +226,28 @@ INNER JOIN inscriptions i ON ura.student_id = i.student_id AND m.id = i.materia_
 WHERE ura.student_id = 1 AND attendance_date LIKE '%24' ---------------> esta clausula es para filtrar por años
 ORDER BY materia_name
 
+SELECT 
+    A.id AS attendance_id, 
+    career_id, 
+    A.professor_id, 
+    URA.student_id, 
+    A.materia_id, 
+    attendance_date, 
+    materia_name, 
+    actual_year, 
+    M.classes_quantity AS total_classes,
+    A.classes_quantity,
+    U.name AS professor,
+    U.last_name AS professor_last_name,
+    C.career_name 
+FROM attendance A
+INNER JOIN materia M ON A.materia_id = M.id
+INNER JOIN career C ON M.career_id = C.id
+INNER JOIN users U ON M.professor_id = U.id
+INNER JOIN user_register_attendance URA ON URA.attendance_id = A.id
+INNER JOIN inscriptions I ON URA.student_id = I.student_id AND M.id = I.materia_id
+WHERE URA.student_id = ? AND attendance_date LIKE ? AND M.id = ?
+
 ESTA ES UNA VARIACION, PODEMOS OBTENER MATERIA POR MATERIA, PERO SERIAN VARIAS CONSULTAS,
 DEPENDIENDO DE LA CANTIDAD DE MATERIAS A LA QUE ESTE INSCRIPTO
 SELECT A.id AS attendance_id, 
@@ -248,3 +270,10 @@ INNER JOIN users U ON M.professor_id = U.id
 INNER JOIN user_register_attendance URA ON URA.attendance_id = A.id
 INNER JOIN inscriptions I ON ura.student_id = I.student_id AND M.id = I.materia_id
 WHERE URA.student_id = 1 AND attendance_date LIKE '%23' AND M.id = 1
+
+
+SELECT * FROM users U
+INNER JOIN inscriptions I ON U.id = I.student_id
+INNER JOIN materia M ON I.materia_id = M.id
+INNER JOIN users P ON M.professor_id = P.id
+WHERE M.professor_id = 2

@@ -103,7 +103,11 @@ const getByParameters = async (req = request, res = response) => {
 //? The attendance, the quantity of classes given at the actual date
 //? And the student, the quantity of classes attended (givenList.length)
 const postOne = async (req = request, res = response) => {
+    const split = req.body.attendance_date.split('/')
+    const id = split[0] + split[1] + split[2] + req.body.professor_id + req.body.materia_id + req.body.schedule_id
+    console.log(id);
     const attendance = { // Get the object
+        id: id,
         attendance_date: req.body.attendance_date, 
         professor_id: req.body.professor_id, 
         materia_id: req.body.materia_id, 
@@ -127,6 +131,7 @@ const postOne = async (req = request, res = response) => {
             res.status(201).json({
                 ok: true,
                 result,
+                id: id,
                 msg: 'Created'
             })
         }

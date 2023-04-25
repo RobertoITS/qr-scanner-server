@@ -14,6 +14,8 @@ import msRoutes from './routes/materia.has.schedules.routes'
 import ccmRoutes from './routes/career.contains.materia.routes'
 import attRoutes from './routes/attendance.routes'
 import uraRoutes from './routes/user.register.attendance.routes'
+import studentRoutes from './routes/student.routes'
+import teacherRoutes from './routes/teachers.routes'
 
 //* Express
 const app = express()
@@ -48,7 +50,9 @@ app.use(
     msRoutes, 
     ccmRoutes, 
     attRoutes,
-    uraRoutes
+    uraRoutes,
+    studentRoutes,
+    teacherRoutes
 )
 
 export default app
