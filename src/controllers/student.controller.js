@@ -27,7 +27,8 @@ const getAttendances = async (req = request, res = response) => {
                 attendance_date, 
                 materia_name, 
                 actual_year, 
-                m.classes_quantity, 
+                m.classes_quantity AS total_classes,
+                a.classes_quantity,
                 u.name AS professor, 
                 u.last_name AS professor_last_name, 
                 c.career_name 
