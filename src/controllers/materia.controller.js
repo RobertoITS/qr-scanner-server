@@ -20,7 +20,7 @@ const postOne = async (req = request, res = response) => {
         materia_name: req.body.materia_name, 
         professor_id: req.body.professor_id, 
         actual_year: req.body.actual_year, 
-        classes_quantity: req.body.classes_quantity, 
+        total_classes: req.body.total_classes, 
         career_id: req.body.career_id 
     }
     try {
@@ -111,7 +111,7 @@ const putOne = async (req = request, res = response) => {
         materia_name: req.body.materia_name,
         professor_id: req.body.professor_id,
         actual_year: req.body.actual_year,
-        classes_quantity: req.body.classes_quantity,
+        total_classes: req.body.total_classes,
         career_id: req.body.career_id
     }
     try {

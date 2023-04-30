@@ -27,9 +27,8 @@ const getAll = async (req = request, res = response) => {
             INNER JOIN attendance A ON URA.attendance_id = A.id 
             INNER JOIN materia M ON A.materia_id = M.id 
             INNER JOIN users UP ON M.professor_id = UP.id 
-            INNER JOIN schedules S ON A.schedule_id = S.id 
-            INNER JOIN career_contains_materia CCM ON A.materia_id = CCM.materia_id 
-            INNER JOIN career C ON CCM.career_id = C.id`
+            INNER JOIN schedules S ON A.schedule_id = S.id
+            INNER JOIN career C ON M.career_id = C.id`
         )
         res.status(200).json({
             ok: true,
@@ -121,9 +120,11 @@ const getByParameter = async (req = request, res = response) => {
  */
 const postOne = async (req = request, res = response) => {
     const ura = {  // Get the object
-        student_id: req.body.student_id, 
-        attendance_id: req.body.attendance_id 
+        id: `${req.body.attendance_id}` + `${req.body.student_id}`,
+        student_id: req.body.student_id,
+        attendance_id: req.body.attendance_id
     }
+    console.log(ura.id);
     try {
         const connection = await connect
         const result = await connection.query(

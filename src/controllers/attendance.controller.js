@@ -103,7 +103,11 @@ const getByParameters = async (req = request, res = response) => {
 //? The attendance, the quantity of classes given at the actual date
 //? And the student, the quantity of classes attended (givenList.length)
 const postOne = async (req = request, res = response) => {
+    let classes_quantity = 0 //! -----------------> Classes quantity variable
     
+    const connection = await connect
+    connection.beginTransaction() //? Start transaction
+
     //! GET THE ACTUAL DATE (SERVER LOCAL)
     //? -------------------------------->
     const date = new Date()
@@ -127,29 +131,49 @@ const postOne = async (req = request, res = response) => {
         attendance_date: today, //? ---------> SERVER DATE
         professor_id: req.body.professor_id, 
         materia_id: req.body.materia_id, 
-        schedule_id: req.body.schedule_id,
-        classes_quantity: 0 //? Classes quantity, for now, value = 0
+        schedule_id: req.body.schedule_id
     }
+    //? ----------------------- GET REQUEST ------------------------
     try {
-        const connection = await connect
-        const result = await connection.query( //! First, obtain the quantity of attendance created
-            `SELECT COUNT(id) AS classes_quantity 
-            FROM attendance 
-            WHERE materia_id = ?`, attendance.materia_id)
-        attendance.classes_quantity = result[0].classes_quantity + 1 //! Add une to the actual quantity
+        const result = await connection.query( //! Obtains classes quantity from materia
+            `SELECT classes_quantity FROM materia WHERE id = ?`, attendance.materia_id
+        )
+        if(result[0].classes_quantity == null || result[0].classes_quantity == "null"){ //! Adds one more classes to the materia
+            classes_quantity = 1
+        }
+        else {
+            classes_quantity = result[0].classes_quantity + 1
+        }
+        //? ----------------------- PUT REQUEST ------------------------
         try {
-            const connection = await connect
-            const result = await connection.query( //! Then, insert al the data
-                `INSERT 
-                INTO attendance 
-                SET ?`, attendance
+            await connection.query(
+                `UPDATE materia
+                SET classes_quantity = ?
+                WHERE id = ?`, [classes_quantity, attendance.materia_id]
             )
-            res.status(201).json({
-                ok: true,
-                result,
-                id: id,
-                msg: 'Created'
-            })
+            //? ----------------------- POST REQUEST ------------------------
+            try {
+                const postResult = await connection.query( //! Then, insert al the data
+                    `INSERT 
+                    INTO attendance 
+                    SET ?`, attendance
+                )
+                connection.commit() //? Commit all changes
+                res.status(201).json({
+                    ok: true,
+                    postResult,
+                    id: +id,
+                    msg: 'Created'
+                })
+            }
+            catch (e) {
+                connection.rollback() //? RollBack all changes
+                res.status(400).json({
+                    ok: false,
+                    e,
+                    msg: 'Rejected'
+                })
+            }
         }
         catch (e) {
             res.status(400).json({
@@ -159,14 +183,13 @@ const postOne = async (req = request, res = response) => {
             })
         }
     }
-    catch(e){
+    catch (e){
         res.status(400).json({
-            ok:false,
+            ok: false,
             e,
             msg: 'Rejected'
         })
     }
-    
 }
 
 //! Put Request
@@ -213,30 +236,69 @@ const putOne = async (req = request, res = response) => {
  * @param {Json} res type: Json => Response of the query
  * 
  */
+//! VER SI SE PUEDE MEJORAR
 const deleteOne = async (req = request, res = response) => {
     const id = req.params.id // Get the id
+    let classes_quantity = 0
+    const connection = await connect
+    await connection.beginTransaction() //? Start transaction of queries
     try {
-        const connection = await connect
         const result = await connection.query(
-            `DELETE 
-            FROM attendance 
-            WHERE id = ?`, id
+            `SELECT * FROM attendance WHERE id = ?`, id
         )
-        if(result.affectedRows != 0) { // If the record exist, it's deleted
-            res.status(200).json({
-                ok: true,
-                result,
-                msg: 'Deleted'
-            })
+        const materia_id = result[0].materia_id
+        try {
+            const result = await connection.query(
+                `SELECT classes_quantity FROM materia WHERE id = ?`, materia_id
+            )
+            classes_quantity = result[0].classes_quantity - 1 // <------------ Subtract une class to materia
+            try {
+                await connection.query(
+                    `UPDATE materia
+                    SET classes_quantity = ?
+                    WHERE id = ?`, [classes_quantity, materia_id]
+                )
+                try {
+                    await connection.query( //! DELETE ALL THE REFERENCES!!
+                        `DELETE FROM user_register_attendance WHERE attendance_id = ?`, id
+                    )
+                    const result = await connection.query( //! Delete entry
+                        `DELETE FROM attendance WHERE id = ?`, id
+                    )
+                    
+                    connection.commit() //? If succeed, commit all changes
+                    res.status(200).json({
+                        ok: true,
+                        result,
+                        msg: 'Deleted'
+                    })
+                }
+                catch (e) {
+                    connection.rollback() //? Else, rollback all the changes
+                    res.status(400).json({
+                        ok: false,
+                        e,
+                        msg: 'Rejected'
+                    })
+                }
+            }
+            catch (e) {
+                res.status(400).json({
+                    ok: false,
+                    e,
+                    msg: 'Rejected'
+                })
+            }
         }
-        else { // If the record did't exist, 404 not found
-            res.status(404).json({
-                ok: true,
-                msg: 'Not found'
+        catch (e) {
+            res.status(400).json({
+                ok: false,
+                e,
+                msg: 'Rejected'
             })
         }
     }
-    catch(e) {
+    catch (e) {
         res.status(400).json({
             ok: false,
             e,
