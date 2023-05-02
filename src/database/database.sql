@@ -629,3 +629,26 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+
+SELECT 
+    C.id AS career_id, 
+    M.id AS materia_id, 
+    MHS.id AS materia_has_schedules_id, 
+    S.id AS schedule_id,
+    M.materia_name,
+    M.actual_year,
+    M.classes_quantity,
+    C.career_name,
+    C.description,
+    C.duration,
+    S.class_day,
+    S.class_schedule,
+    U.name AS student_name
+FROM materia M
+INNER JOIN career C ON M.career_id = C.id
+INNER JOIN materia_has_schedules MHS ON M.id = MHS.materia_id
+INNER JOIN schedules S ON MHS.schedule_id = S.id
+INNER JOIN inscriptions I ON M.id = I.materia_id
+INNER JOIN users U ON U.id = I.student_id
+WHERE M.professor_id = 2
